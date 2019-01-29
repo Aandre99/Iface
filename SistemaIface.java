@@ -2,11 +2,14 @@
 package iface;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class SistemaIface {
+public class SistemaIface implements ValidarNome, LoginUsuario {
     
     public static Scanner ler = new Scanner(System.in);
+    
+    // Funções de Menu
     
     public void MenuPrincipal(){
         
@@ -40,7 +43,7 @@ public class SistemaIface {
         System.out.println("5 - Ler mensagens;");
         System.out.println("6 - Criar Comunidade;");
         System.out.println("7 - Gerenciar Comunidade (Apenas para Administrador);");
-        System.out.println("8 - Ver iformações do  Perfil;");
+        System.out.println("8 - Ver informações do  Perfil;");
         System.out.println("0 - Sair");
         
          System.out.println(" - - - - - - - - - - - - - - -\n");
@@ -56,14 +59,24 @@ public class SistemaIface {
         System.out.println("\n- - - - - - - - - - - - - -\n");
     }
     
+    // Funções Principais
+    
     public void CriarConta(ArrayList<Usuario> Lista){
         
         Usuario novoUsuario = new Usuario();
         String auxiliar = null;
         
-        System.out.println("Informe as seguintes informações para cadastrar-se no Iface: ");
+        System.out.println("Digite as seguintes informações para cadastrar-se no Iface: ");
         System.out.println("Nome de Usuario: ");
-        auxiliar = ler.nextLine();
+        
+        while(true){
+            auxiliar = ler.nextLine();
+            if(!VerificaNome(auxiliar, Lista)){
+                break;
+            }else{
+                System.out.println("\nNome de usuario ja existe, informe um nome diferente!\n");
+            }
+        }
         novoUsuario.getMeuPerfil().setNomeUsuario(auxiliar);
         
         System.out.println("Login: ");
@@ -76,48 +89,31 @@ public class SistemaIface {
         
         Lista.add(novoUsuario);
         
-        System.out.println("\nConta criada com sucesso!");
+        System.out.println("\n-> Conta criada com sucesso!");
     }
-    public Usuario Login(ArrayList<Usuario> Lista)
-    {
+    public void RemoverConta(ArrayList<Usuario> Lista){
+        if(Lista.size() > 0)
+        {
             String auxiliar = null;
-            boolean verificaLogin = false;
-            boolean verificaSenha = false;
-            Usuario Atual = null;
-            
-            System.out.println("Digite as seguintes informações: ");
-            System.out.println("Login: ");
-            while(true)
-            {
-                auxiliar = ler.nextLine();
-                for(Usuario Item : Lista)
-                {
-                    if(Item.getMeuPerfil().getLogin().equals(auxiliar))
-                    {  
-                        verificaLogin = true;
-                        System.out.println("Senha: ");
-                        while(true)
-                        {
-                            auxiliar = ler.nextLine();
-                            if(Item.getMeuPerfil().getSenha().equals(auxiliar)){
-                                verificaSenha = true;
-                                Atual = Item;
-                            }
-                            if(verificaSenha){
-                                break;
-                            }else{
-                                System.out.println("Senha Incorreta, verifique sua senha e tente novamente!");
-                            }
-                        }
-                    }
+            int opcao;
+            System.out.println("Deseja realmente excluir sua conta permanentemente?");
+            System.out.println("1 - Sim | 0 - Não\n");
+            opcao = ler.nextInt();
+            auxiliar = ler.nextLine();
+
+            if(opcao == 1){
+                Usuario Aux = Login(Lista);
+                for(Usuario Item :  Aux.getAmigos()){
+                    Item.getAmigos().remove(Aux);
                 }
-                if(verificaLogin)
-                {
-                    return Atual;
-                }else{
-                    System.out.println("Login informado nao encontrado! Informe-o novamente!");
-                }
+                Lista.remove(Aux);
+                System.out.println("Conta removida com sucesso!");   
+            }else{
+                System.out.println("Remoção abortada com sucesso!");
             }
+        }else{
+            System.out.println("Não ha contas cadastradas!");
+        }
     }
     public ArrayList<Usuario> UsuarioLogado(ArrayList <Usuario> Lista, ArrayList<Comunidade> ListaComunidade){
         
@@ -129,6 +125,8 @@ public class SistemaIface {
             int opcao;
             String auxiliar = null;
             
+            try
+            {
                 while(true)
                 {
                     MenuUsuarioLogado();
@@ -167,6 +165,10 @@ public class SistemaIface {
                             break;
                     }
                }
+            }catch(InputMismatchException II){
+                System.out.println("\n-> Formato da Entrada diferente do esperado!");
+                System.out.println("-> Desconectando de sua conta...");
+            }
                 
                 for(Usuario Item : Lista)
                 {
@@ -178,7 +180,9 @@ public class SistemaIface {
             }
             return Lista;
         }
-        
+    
+    // Funções especificas de um Usuario
+    
     public void MostrarUsuario(Usuario Atual){
         
             System.out.println("Informacoes do Usuario: ");
@@ -362,8 +366,7 @@ public class SistemaIface {
             }
         }
     }
-    public Usuario VerificarSolicitacoes(Usuario Atual)
-   {    
+    public Usuario VerificarSolicitacoes(Usuario Atual){    
         int opcao;
         String auxiliar = null;
         
@@ -540,34 +543,7 @@ public class SistemaIface {
             }
         }
     }
-    
-    public void RemoverConta(ArrayList<Usuario> Lista)
-    {
-        if(Lista.size() > 0)
-        {
-            String auxiliar = null;
-            int opcao;
-            System.out.println("Deseja realmente excluir sua conta permanentemente?");
-            System.out.println("1 - Sim | 0 - Não\n");
-            opcao = ler.nextInt();
-            auxiliar = ler.nextLine();
-
-            if(opcao == 1){
-                Usuario Aux = Login(Lista);
-                for(Usuario Item :  Aux.getAmigos()){
-                    Item.getAmigos().remove(Aux);
-                }
-                Lista.remove(Aux);
-                System.out.println("Conta removida com sucesso!");   
-            }else{
-                System.out.println("Remoção abortada com sucesso!");
-            }
-        }else{
-            System.out.println("Não ha contas cadastradas!");
-        }
-    }
-    public Comunidade CriarComunidade(Usuario Atual)
-    {
+    public Comunidade CriarComunidade(Usuario Atual){
         String auxiliar = null;
         Comunidade NovaComunidade = new Comunidade();
         
@@ -608,7 +584,7 @@ public class SistemaIface {
                     {
                         while(true)
                         {
-                            if(Login(Lista).equals(Item.getAdministrador())){
+                            if((Login(Lista)).equals(Item.getAdministrador())){
                                 System.out.println("Acesso ao Administrador permitido");
                                 break;
                             }else{
@@ -616,40 +592,47 @@ public class SistemaIface {
                             }
                         }
 
-                        while(true)
+                        try
                         {
-                            MenuComunidade();
-                            opcao = ler.nextInt();
-
-                            if(opcao == 0){break;}
-
-                            switch(opcao)
+                            
+                      
+                            while(true)
                             {
-                                case 1:
-                                    Item.AdicionarMembros(Item);
-                                    break;
-                                case 2:
-                                    Item.RemoverMembros();
-                                    break;
-                                case 3:
-                                    Item.MostrarMembros();
-                                    break;
-                                case 4:
-                                    Item.VerMembro(Item);
-                                    break;
-                                default:
-                                    System.out.println("Opção Inexistente!\n");
+                                MenuComunidade();
+                                opcao = ler.nextInt();
+
+                                if(opcao == 0){break;}
+
+                                switch(opcao)
+                                {
+                                    case 1:
+                                        Item.AdicionarMembros(Item);
+                                        break;
+                                    case 2:
+                                        Item.RemoverMembros();
+                                        break;
+                                    case 3:
+                                        Item.MostrarMembros();
+                                        break;
+                                    case 4:
+                                        Item.VerMembro(Item);
+                                        break;
+                                    default:
+                                        System.out.println("Opção Inexistente!\n");
+                                }
                             }
+                        }catch(InputMismatchException IV){
+                            System.out.println("Entrada informada difere do tipo de dado esperado!");
+                            System.out.println("Retornando ao menu de edições....");
                         }
-                    }
+                        
+                      }
                 }
         }else{
             System.out.println("Você Não possui Comunidades!");
         }
     }
-    
-    public void SolicitarComunidade(Usuario Atual, ArrayList<Comunidade> Lista)
-    {
+    public void SolicitarComunidade(Usuario Atual, ArrayList<Comunidade> Lista){
         String auxiliar = null;
         System.out.println("Comunidades Disponiveis: ");
         for(Comunidade Item : Lista){
@@ -671,4 +654,62 @@ public class SistemaIface {
             }
         }
     }
+    
+    // Interfaces
+    
+    @Override
+    public boolean VerificaNome(String nome, ArrayList<Usuario> listaUsuarios) {
+        
+        for(Usuario usuario : listaUsuarios){
+            if(usuario.getMeuPerfil().getNomeUsuario().equals(nome)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Usuario Login(ArrayList<Usuario> Lista) {
+        
+         String auxiliar = null;
+            boolean verificaLogin = false;
+            boolean verificaSenha = false;
+            Usuario Atual = null;
+            
+            System.out.println("Digite as seguintes informações: ");
+            System.out.println("Login: ");
+            
+                while(true)
+                {
+                    auxiliar = ler.nextLine();
+                    for(Usuario Item : Lista)
+                    {
+                        if(Item.getMeuPerfil().getLogin().equals(auxiliar))
+                        {  
+                            verificaLogin = true;
+                            System.out.println("Senha: ");
+                            while(true)
+                            {
+                                auxiliar = ler.nextLine();
+                                if(Item.getMeuPerfil().getSenha().equals(auxiliar)){
+                                    verificaSenha = true;
+                                    Atual = Item;
+                                }
+                                if(verificaSenha){
+                                    break;
+                                }else{
+                                    System.out.println("Senha Incorreta, verifique sua senha e tente novamente!");
+                                }
+                            }
+                        }
+                    }
+                    if(verificaLogin)
+                    {
+                        return Atual;
+                    }else{
+                        System.out.println("Login informado nao encontrado! Informe-o novamente!");
+                    }
+                }
+    }
+   
 }

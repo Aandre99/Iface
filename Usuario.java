@@ -119,5 +119,4 @@ public class Usuario {
     public void setListaAtributos(Atributo Atributos) {
         this.ListaAtributos.add(Atributos);
     }
-    
 }

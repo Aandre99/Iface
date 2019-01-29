@@ -1,0 +1,8 @@
+package iface;
+
+import java.util.ArrayList;
+
+public interface LoginUsuario {
+    
+    public Usuario Login(ArrayList<Usuario> Lista);
+}
