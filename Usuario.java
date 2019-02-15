@@ -1,10 +1,9 @@
-package iface;
+package projeto;
 
 import java.util.ArrayList;
 
-public class Usuario {
+public class Usuario extends Perfil{
     
-    private Perfil meuPerfil;
     private ArrayList<Mensagens> caixaDeMensagemRecebidas;
     private ArrayList<Mensagens> MensagensEnviadas;
     private ArrayList<Usuario> Amigos;
@@ -15,16 +14,11 @@ public class Usuario {
     public Usuario(){
         
         this.caixaDeMensagemRecebidas = new ArrayList<>();
-        this.meuPerfil = new Perfil();
         this.Solicitacoes = new ArrayList<>();
         this.Amigos = new ArrayList<>();
         this.Comunidades = new ArrayList<>();
         this.MensagensEnviadas = new ArrayList<>();
         this.ListaAtributos = new ArrayList<>();
-    }
-
-    public Perfil getMeuPerfil() {
-        return meuPerfil;
     }
 
     public ArrayList<Mensagens> getCaixaDeMensagem() {
@@ -54,58 +48,6 @@ public class Usuario {
     public ArrayList<Comunidade> getComunidades() {
         return Comunidades;
     }
-
-    public void setComunidades(Comunidade NovaComunidade) {
-        this.Comunidades.add(NovaComunidade);
-    }
-    public void MostrarInformacoes(){
-        
-        System.out.println("Nome: " + this.meuPerfil.getNomeUsuario());
-        System.out.println("Endereco: " + this.meuPerfil.getEndereco());
-        System.out.println("Contato: " + this.meuPerfil.getContato());
-        
-        if(this.getListaAtributos().size() > 0)
-        {
-            for(Atributo Item : this.getListaAtributos()){
-                System.out.println(Item.getAtributo() + " : " + Item.getDescricao());
-            }
-        }
-        System.out.println("Amigos: ");
-        for(Usuario Item : this.Amigos){
-            System.out.println("Nome: " + Item.getMeuPerfil().getNomeUsuario());
-        }
-        System.out.println("Comunidades: ");
-        for(Comunidade Item : this.Comunidades){
-            System.out.println("Nome da Comunidade: " + Item.getNomeDaComunidade());
-        }
-        System.out.println("Mensagens de Usuarios: \n");
-        
-        System.out.println("Mensagens Recebidas: ");
-        
-        for(Mensagens Item : this.caixaDeMensagemRecebidas){
-            System.out.println("De: " + Item.getRemetente().getMeuPerfil().getNomeUsuario());
-            System.out.println("Mensagem: " + Item.getMensagem() + "\n");
-        }
-        System.out.println("Mensagens Enviadas: ");
-
-        for(Mensagens Item : this.MensagensEnviadas)
-        {
-            System.out.println("Para: " + Item.getRemetente().getMeuPerfil().getNomeUsuario());
-            System.out.println("Mensagem: " + Item.getMensagem());
-        }
-        System.out.println("\nMensagens de Comunidades: ");
-        for(Comunidade Item : this.getComunidades())
-        {
-            System.out.println("Comunidade : " + Item.getNomeDaComunidade());
-            for(Mensagens Item2 : Item.getComunidade())
-            {
-                System.out.println("De: " + Item2.getRemetente().getMeuPerfil().getNomeUsuario());
-                System.out.println("Mensagens: " + Item2.getMensagem());
-            }
-        }
-        System.out.println("\n");
-}
-
     public ArrayList<Mensagens> getMensagensEnviadas() {
         return MensagensEnviadas;
     }
@@ -119,4 +61,56 @@ public class Usuario {
     public void setListaAtributos(Atributo Atributos) {
         this.ListaAtributos.add(Atributos);
     }
+    public void setComunidades(Comunidade NovaComunidade) {
+        this.Comunidades.add(NovaComunidade);
+    }
+    
+    
+    public void MostrarInformacoes(){
+        
+        System.out.println("Nome: " + super.getNomeUsuario());
+        System.out.println("Endereco: " + super.getEndereco());
+        System.out.println("Contato: " + super.getContato());
+        
+        if(this.getListaAtributos().size() > 0)
+        {
+            for(Atributo Item : this.getListaAtributos()){
+                System.out.println(Item.getAtributo() + " : " + Item.getDescricao());
+            }
+        }
+        System.out.println("Amigos: ");
+        for(Usuario Item : this.Amigos){
+            System.out.println("Nome: " + Item.getNomeUsuario());
+        }
+        System.out.println("Comunidades: ");
+        for(Comunidade Item : this.Comunidades){
+            System.out.println("Nome da Comunidade: " + Item.getNomeDaComunidade());
+        }
+        System.out.println("Mensagens de Usuarios: \n");
+        
+        System.out.println("Mensagens Recebidas: ");
+        
+        for(Mensagens Item : this.caixaDeMensagemRecebidas){
+            System.out.println("De: " + Item.getRemetente().getNomeUsuario());
+            System.out.println("Mensagem: " + Item.getMensagem() + "\n");
+        }
+        System.out.println("Mensagens Enviadas: ");
+
+        for(Mensagens Item : this.MensagensEnviadas)
+        {
+            System.out.println("Para: " + Item.getRemetente().getNomeUsuario());
+            System.out.println("Mensagem: " + Item.getMensagem());
+        }
+        System.out.println("\nMensagens de Comunidades: ");
+        for(Comunidade Item : this.getComunidades())
+        {
+            System.out.println("Comunidade : " + Item.getNomeDaComunidade());
+            for(Mensagens Item2 : Item.getComunidade())
+            {
+                System.out.println("De: " + Item2.getRemetente().getNomeUsuario());
+                System.out.println("Mensagens: " + Item2.getMensagem());
+            }
+        }
+        System.out.println("\n");
+}
 }

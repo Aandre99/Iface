@@ -1,5 +1,4 @@
-
-package iface;
+package projeto;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -8,9 +7,13 @@ import java.util.Scanner;
 public class SistemaIface implements ValidarNome, LoginUsuario {
     
     public static Scanner ler = new Scanner(System.in);
+    ArrayList<Usuario> ListaUsuarios;
+    ArrayList<Comunidade> ListaComunidade;
     
-    // Funções de Menu
-    
+    public SistemaIface(){
+        ListaUsuarios = new ArrayList<>();
+        ListaComunidade = new ArrayList<>();
+    }
     public void MenuPrincipal(){
         
         System.out.println("\n- - - - Menu - - - -");
@@ -61,7 +64,7 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
     
     // Funções Principais
     
-    public void CriarConta(ArrayList<Usuario> Lista){
+    public void CriarConta(){
         
         Usuario novoUsuario = new Usuario();
         String auxiliar = null;
@@ -71,28 +74,28 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
         
         while(true){
             auxiliar = ler.nextLine();
-            if(!VerificaNome(auxiliar, Lista)){
+            if(!VerificaNome(auxiliar, this.ListaUsuarios)){
                 break;
             }else{
                 System.out.println("\nNome de usuario ja existe, informe um nome diferente!\n");
             }
         }
-        novoUsuario.getMeuPerfil().setNomeUsuario(auxiliar);
+        novoUsuario.setNomeUsuario(auxiliar);
         
         System.out.println("Login: ");
         auxiliar = ler.nextLine();
-        novoUsuario.getMeuPerfil().setLogin(auxiliar);
+        novoUsuario.setLogin(auxiliar);
         
         System.out.println("Senha: ");
         auxiliar = ler.nextLine();
-        novoUsuario.getMeuPerfil().setSenha(auxiliar);
+        novoUsuario.setSenha(auxiliar);
         
-        Lista.add(novoUsuario);
+        this.ListaUsuarios.add(novoUsuario);
         
         System.out.println("\n-> Conta criada com sucesso!");
     }
-    public void RemoverConta(ArrayList<Usuario> Lista){
-        if(Lista.size() > 0)
+    public void RemoverConta(){
+        if(this.ListaUsuarios.size() > 0)
         {
             String auxiliar = null;
             int opcao;
@@ -102,11 +105,11 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
             auxiliar = ler.nextLine();
 
             if(opcao == 1){
-                Usuario Aux = Login(Lista);
+                Usuario Aux = Login(this.ListaUsuarios);
                 for(Usuario Item :  Aux.getAmigos()){
                     Item.getAmigos().remove(Aux);
                 }
-                Lista.remove(Aux);
+                this.ListaUsuarios.remove(Aux);
                 System.out.println("Conta removida com sucesso!");   
             }else{
                 System.out.println("Remoção abortada com sucesso!");
@@ -115,13 +118,13 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
             System.out.println("Não ha contas cadastradas!");
         }
     }
-    public ArrayList<Usuario> UsuarioLogado(ArrayList <Usuario> Lista, ArrayList<Comunidade> ListaComunidade){
+    public void UsuarioLogado(){
         
-        if(Lista.size() < 1){
+        if(this.ListaUsuarios.size() < 1){
             System.out.println("Não ha contas cadastradas!");
         }else{
             
-            Usuario Atual = Login(Lista);
+            Usuario Atual = Login(this.ListaUsuarios);
             int opcao;
             String auxiliar = null;
             
@@ -140,7 +143,7 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
                             EditarInformacao(Atual);
                             break;
                         case 2:
-                            AdicionarAmigos(Lista,ListaComunidade, Atual);
+                            AdicionarAmigos(Atual);
                             break;
                         case 3:
                             Atual = VerificarSolicitacoes(Atual);
@@ -152,16 +155,16 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
                             LerMensagem(Atual);
                             break;
                         case 6:
-                            ListaComunidade.add(CriarComunidade(Atual));
+                            this.ListaComunidade.add(CriarComunidade(Atual));
                             break;
                         case 7:
-                            GerenciarComunidade(Atual,Lista);
+                            GerenciarComunidade(Atual,this.ListaUsuarios);
                             break;
                         case 8 :
                             MostrarUsuario(Atual);
                             break;
                         case 9 : 
-                            SolicitarComunidade(Atual, ListaComunidade);
+                            SolicitarComunidade(Atual, this.ListaComunidade);
                             break;
                     }
                }
@@ -170,15 +173,14 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
                 System.out.println("-> Desconectando de sua conta...");
             }
                 
-                for(Usuario Item : Lista)
+                for(Usuario Item : this.ListaUsuarios)
                 {
-                    if(Item.getMeuPerfil().getNomeUsuario().equals(Atual.getMeuPerfil().getNomeUsuario())){
+                    if(Item.getNomeUsuario().equals(Atual.getNomeUsuario())){
                         Item = Atual;
                         break;
                     }
                 }
             }
-            return Lista;
         }
     
     // Funções especificas de um Usuario
@@ -223,19 +225,19 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
                         if(Atual.getComunidades().size() > 0){
                             for(Comunidade Item : Atual.getComunidades())
                             {
-                                if(Item.getAdministrador().getMeuPerfil().getLogin().equals(Atual.getMeuPerfil().getLogin()))
+                                if(Item.getAdministrador().getLogin().equals(Atual.getLogin()))
                                 {
-                                    Item.getAdministrador().getMeuPerfil().setLogin(novaInformacao);
+                                    Item.getAdministrador().setLogin(novaInformacao);
                                 }
                             }
                         }
-                        Atual.getMeuPerfil().setLogin(novaInformacao);
+                        Atual.setLogin(novaInformacao);
                         break;
 
                     case 2:
                         System.out.println("Informe o novo nome de usuário: ");
                         novaInformacao = ler.nextLine();
-                        Atual.getMeuPerfil().setNomeUsuario(novaInformacao);
+                        Atual.setNomeUsuario(novaInformacao);
                         break;
                     case 3:
                         System.out.println("Informe a nova senha: ");
@@ -243,23 +245,23 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
                         if(Atual.getComunidades().size() > 0){
                             for(Comunidade Item : Atual.getComunidades())
                             {
-                                if(Item.getAdministrador().getMeuPerfil().getLogin().equals(Atual.getMeuPerfil().getLogin()))
+                                if(Item.getAdministrador().getLogin().equals(Atual.getLogin()))
                                 {
-                                    Item.getAdministrador().getMeuPerfil().setSenha(novaInformacao);
+                                    Item.getAdministrador().setSenha(novaInformacao);
                                 }
                             }
                         }
-                        Atual.getMeuPerfil().setSenha(novaInformacao);
+                        Atual.setSenha(novaInformacao);
                         break;
                     case 4:
                         System.out.println("Informe o novo Endereco: ");
                         novaInformacao = ler.nextLine();
-                        Atual.getMeuPerfil().setEndereco(novaInformacao);
+                        Atual.setEndereco(novaInformacao);
                         break;
                     case 5:
                         System.out.println("Informe o novo Contato: ");
                         novaInformacao = ler.nextLine();
-                        Atual.getMeuPerfil().setContato(novaInformacao);
+                        Atual.setContato(novaInformacao);
                         break;
                     case 6:
                         System.out.println("Informe o nome do atributo que deseja Editar: ");
@@ -304,7 +306,7 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
        
           return Atual;
     }
-    public void AdicionarAmigos(ArrayList <Usuario> Lista, ArrayList<Comunidade> ListaComunidade, Usuario Atual){
+    public void AdicionarAmigos( Usuario Atual){
         
         String auxiliar = null;
         int opcao;
@@ -318,23 +320,23 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
         
         if(opcao == 1)
         {
-            if(Lista.size() > 1)
+            if(this.ListaUsuarios.size() > 1)
             {
                 System.out.println("Usuarios Disponiveis: ");
-                for(Usuario Item : Lista)
+                for(Usuario Item : this.ListaUsuarios)
                 {
                     if(Item != Atual && !Atual.getAmigos().contains(Item))
                     {
-                        System.out.println("Nome: " + Item.getMeuPerfil().getNomeUsuario());
+                        System.out.println("Nome: " + Item.getNomeUsuario());
                     }
                 }
 
                 System.out.println("Informe o nome do usuario a ser solicitado: ");
                 auxiliar = ler.nextLine();
 
-                for(Usuario Item : Lista)
+                for(Usuario Item : this.ListaUsuarios)
                 {
-                    if(Item.getMeuPerfil().getNomeUsuario().equals(auxiliar))
+                    if(Item.getNomeUsuario().equals(auxiliar))
                     {
                         Item.getSolicitacoes().add(Atual);
                         System.out.println("\n-> Solicitacao enviada com sucesso!\n");
@@ -346,16 +348,16 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
             }
         }else{
             
-            if(ListaComunidade.size() > 0)
+            if(this.ListaComunidade.size() > 0)
             {
                 System.out.println("Comunidades Disponiveis: ");
-                for(Comunidade Item : ListaComunidade){
+                for(Comunidade Item : this.ListaComunidade){
                     System.out.println("Nome: " + Item.getNomeDaComunidade());
                 }
                 
                 System.out.println("Informe a comunidade a qual deseja enviar uma solicitação: ");
                 auxiliar = ler.nextLine();
-                for(Comunidade Item : ListaComunidade)
+                for(Comunidade Item : this.ListaComunidade)
                 {
                     if(Item.getNomeDaComunidade().equals(auxiliar))
                     {
@@ -382,7 +384,7 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
             {
                 for(Usuario Item : Atual.getSolicitacoes())
                 {
-                    System.out.println("Nome: " + Item.getMeuPerfil().getNomeUsuario());
+                    System.out.println("Nome: " + Item.getNomeUsuario());
                     System.out.println("1 - Aceitar | 0 - Rejeitar;");
 
                     opcao = ler.nextInt();
@@ -442,7 +444,7 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
 
                 System.out.println("Lista de Amigos: \n");
                 for(Usuario Item : Atual.getAmigos()){
-                    System.out.println("Nome: " + Item.getMeuPerfil().getNomeUsuario());
+                    System.out.println("Nome: " + Item.getNomeUsuario());
                 }
 
                 System.out.println("Informe para qual amigo deseja enviar uma mensagem: ");
@@ -451,7 +453,7 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
                 mensagem = ler.nextLine();
 
                 for(Usuario Item : Atual.getAmigos()){
-                    if(Item.getMeuPerfil().getNomeUsuario().equals(auxiliar)){
+                    if(Item.getNomeUsuario().equals(auxiliar)){
 
                         Mensagens enviarMensagem = new Mensagens();
                         Mensagens mensagemEnviada = new Mensagens();
@@ -515,7 +517,7 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
 
                 System.out.println("Caixa de mensagens: \n");
                 for(Mensagens Item : Atual.getCaixaDeMensagem()){
-                    System.out.println("De: " + Item.getRemetente().getMeuPerfil().getNomeUsuario());
+                    System.out.println("De: " + Item.getRemetente().getNomeUsuario());
                     System.out.println("Mensagem: " + Item.getMensagem() + "\n");
                 }
             }else{
@@ -661,7 +663,7 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
     public boolean VerificaNome(String nome, ArrayList<Usuario> listaUsuarios) {
         
         for(Usuario usuario : listaUsuarios){
-            if(usuario.getMeuPerfil().getNomeUsuario().equals(nome)){
+            if(usuario.getNomeUsuario().equals(nome)){
                 return true;
             }
         }
@@ -684,14 +686,14 @@ public class SistemaIface implements ValidarNome, LoginUsuario {
                     auxiliar = ler.nextLine();
                     for(Usuario Item : Lista)
                     {
-                        if(Item.getMeuPerfil().getLogin().equals(auxiliar))
+                        if(Item.getLogin().equals(auxiliar))
                         {  
                             verificaLogin = true;
                             System.out.println("Senha: ");
                             while(true)
                             {
                                 auxiliar = ler.nextLine();
-                                if(Item.getMeuPerfil().getSenha().equals(auxiliar)){
+                                if(Item.getSenha().equals(auxiliar)){
                                     verificaSenha = true;
                                     Atual = Item;
                                 }

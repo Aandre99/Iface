@@ -1,4 +1,4 @@
-package iface;
+package projeto;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -66,13 +66,13 @@ public class Comunidade {
         String auxiliar = null;
         boolean checkLogin = false;
         int opcao;
-       
+        
         if(this.getSolicitacoesComunidade().size() > 0)
         {
             System.out.println("Usuarios que desejam fazer parte da comunidade: \n");
             for(Usuario Item : this.SolicitacoesComunidade)
             {
-                System.out.println("Nome: " + Item.getMeuPerfil().getNomeUsuario());
+                System.out.println("Nome: " + Item.getNomeUsuario());
                 System.out.println("1 - Adicionar | 2 - Rejeitar");
                 opcao = ler.nextInt();
                 auxiliar = ler.nextLine();
@@ -100,7 +100,7 @@ public class Comunidade {
             System.out.println("Membros da comunidade:");
             for(Usuario Item : this.Membros)
             {
-                System.out.println("Nome: " + Item.getMeuPerfil().getNomeUsuario());
+                System.out.println("Nome: " + Item.getNomeUsuario());
             }
         }else{
             System.out.println("Não ha membros alem de você na comunidade!");
@@ -119,7 +119,7 @@ public class Comunidade {
 
             for(Usuario Item : this.Membros)
             {
-                if(Item.getMeuPerfil().getNomeUsuario().equals(auxiliar))
+                if(Item.getNomeUsuario().equals(auxiliar))
                 {
                     this.Membros.remove(Item);
                     System.out.println("Usuario removido com sucesso!");
@@ -151,7 +151,7 @@ public class Comunidade {
             System.out.println("Mensagens: ");
             for(Mensagens Item : this.MensagensComunidade)
             {
-                System.out.println("De: " + Item.getRemetente().getMeuPerfil().getNomeUsuario());
+                System.out.println("De: " + Item.getRemetente().getNomeUsuario());
                 System.out.println("Mensagem: " + Item.getMensagem()+ "\n");
             }
             System.out.println("\n");
@@ -166,7 +166,7 @@ public class Comunidade {
         auxiliar = ler.nextLine();
         
         for(Usuario Item : Atual.getMembros()){
-            if(Item.getMeuPerfil().getNomeUsuario().equals(auxiliar)){
+            if(Item.getNomeUsuario().equals(auxiliar)){
                 Item.MostrarInformacoes();
             }
         }

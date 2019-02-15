@@ -1,5 +1,5 @@
 
-package iface;
+package projeto;
 
 public class Atributo {
     private String atributo;

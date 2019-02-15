@@ -1,9 +1,8 @@
-package iface;
+package projeto;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Perfil 
+abstract class Perfil 
 {
      
     Scanner leitor = new Scanner(System.in);
@@ -46,19 +45,15 @@ public class Perfil
     public void setNomeUsuario(String nomeUsuario) {
         this.nomeUsuario = nomeUsuario;
     }
-
     public String getEndereco() {
         return endereco;
     }
-
     public String getContato() {
         return contato;
     }
-
     public void setEndereco(String endereco) {
         this.endereco = endereco;
     }
-
     public void setContato(String contato) {
         this.contato = contato;
     }
